@@ -32,16 +32,48 @@ app.get('/stories/:title', (req, res) => {
 
 // https://hacker-news.firebaseio.com/v0/topstories.json
 
+app.get('/newstories', (req, res, next) => {
+    request(
+        { url: 'https://hacker-news.firebaseio.com/v0/newstories.json' },
+        (error, response, body) => {
+            if (error || response.statusCode !== 200) {
+                return next(new Error('Error requesting new stories'));
+            }
+            const newStories = JSON.parse(body);
+            const limit = 20;
+            
+            Promise.all(
+                newStories.slice(0, limit).map(story => { 
+                    return new Promise((resolve, reject) => {
+                        request(
+                            {url: `https://hacker-news.firebaseio.com/v0/item/${story}.json`},
+                            (error, response, body) => {
+                                if (error || response.statusCode !== 200) {
+                                    return reject(new Error('Error requesting story item'));
+                                }
+                                resolve(JSON.parse(body));
+                            }
+                        );
+                    })
+                })
+            )
+            .then(fullNewStories => {
+                res.json(fullNewStories);
+            })
+            .catch(error => next(error));
+        }    
+    );
+});
+
 app.get('/topstories', (req, res, next) => {
     request(
         { url: 'https://hacker-news.firebaseio.com/v0/topstories.json' },
         (error, response, body) => {
             if (error || response.statusCode !== 200) {
-                console.log('going to next');
                 return next(new Error('Error requesting top stories'));
             }
             const topStories = JSON.parse(body);
-            const limit = 10;
+            const limit = 20;
             
             Promise.all(
                 topStories.slice(0, limit).map(story => { 
