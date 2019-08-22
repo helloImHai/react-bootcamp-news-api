@@ -17,12 +17,15 @@ class App extends Component {
         <br/>
         {
           this.state.stories.map(story => {
-            const {id, title, url, by, score} = story;
+            const {id, title, url, by, score, time} = story;
             return (
                 <div id={id}>
                   <a href={url}><h3>{title}</h3></a>
                   <p>upvotes: {score}</p>
                   <p>- {by} -</p>
+                  <p>
+                    {timeConvert(time)}
+                  </p>
                 </div>
               );
           })
@@ -30,6 +33,16 @@ class App extends Component {
       </div>
     );
   }
+}
+
+function timeConvert(t) {
+  var time = new Date(t * 1000);
+  console.log('time', time);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var year = time.getFullYear();
+  var month = months[time.getMonth()];
+  var date = time.getDate();
+  return date + ' ' + month + ' ' + year;
 }
 
 export default App;
