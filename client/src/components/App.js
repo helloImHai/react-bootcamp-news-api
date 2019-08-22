@@ -13,7 +13,10 @@ class App extends Component {
   render() {
     return (
       <div>
-        <h2>The Latest Hacker News</h2>
+        <p>Try /topstories for top stories</p>
+        <p>Try /newstories for new stories</p>
+        <br/>
+        <h2>The Hottest Hacker News</h2>
         <br/>
         {
           this.state.stories.map(story => {
